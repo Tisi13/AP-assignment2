@@ -1,3 +1,4 @@
+
 package assignment2;
 
 import java.math.BigInteger;
@@ -11,7 +12,6 @@ public class Applications {
     PrintStream out;
     HashMap<Identifier, Set<BigInteger>> map = new HashMap<Identifier,Set<BigInteger>>();
 
-
     public Applications(){
         out = new PrintStream(System.out);
     }
@@ -22,7 +22,6 @@ public class Applications {
 
         Set<BigInteger> result = parseExpression(in);
 
-        eoln(in);
         /*-------- ADD identifier and set to HashMap-------*/
         map.put(identifier,result);
     }
@@ -37,8 +36,8 @@ public class Applications {
         }else
             throw new APException("Please insert a valid print statement");
 
-
     }
+
     private void print_set(Set<BigInteger> set) {
         //TO DO
         while(!set.isEmpty()){
@@ -54,8 +53,6 @@ public class Applications {
         in.nextLine();
 
         eoln(in);
-
-
     }
 
     Set<BigInteger> factor(Scanner in) throws APException {
@@ -134,14 +131,11 @@ public class Applications {
     private void parse_statement(Scanner in) throws APException{
         if (nextCharIsLetter(in)){
             assignment(in);
-
         }else if (nextCharIs(in,'?')){
             print_statement(in);
-
         }else if (nextCharIs(in, '/')) {
             /* do nothing i don't really know why we need to input a comment*/
             comment(in);
-
         } else {
             throw new APException("The input is not a valid statement\n");
         }
@@ -213,26 +207,40 @@ public class Applications {
         /*-----------skip '{'---------*/
         nextChar(in);
 
-        while (in.hasNext()) {
+        set = rowNaturalNumbers(in);
 
-            parseWhitespace(in);
-
-            if(in.hasNextBigInteger()) {
-                /*add Biginteger or something---*/
-                
-
-
-
-            }
-
-
-
+        if (nextCharIs(in, '}')) return set;
+        else {
+            throw new APException("The elements of a set must be provided between curly brackets.\n");
         }
+    }
 
+    private Set<BigInteger> rowNaturalNumbers(Scanner in) {
+        Set<BigInteger> set = new Set<BigInteger>();
 
+        while (nextCharIs(in, ',')){
+            try {
+                set.addElement(naturalNumber(in));
+            } catch (APException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         return set;
     }
 
+    private BigInteger naturalNumber(Scanner in) throws APException {
+        BigInteger number = in.nextBigInteger();
+
+        if ((number.signum() == 0)|| (number.signum()==1)) {
+            return number;
+        }
+        else
+        {
+            throw new APException("The elements of a set must be 0 or positive. \n");
+        }
+
+    }
 
     /*------------parse Expression------------*/
     private Set<BigInteger> parseExpression(Scanner in) throws APException {
