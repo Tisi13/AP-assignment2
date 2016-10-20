@@ -49,9 +49,9 @@ public class List<E extends Comparable<E>> implements ListInterface<E> {
 		/* will place current either right before or right after place to insert */
 		find(d);
 
-		switch (current.data.compareTo(d)) {
+
 		/* there is already an element of equal to d */
-		case 0:
+		if (current.data.compareTo(d) == 0) {
 			/* place new node after current, change current to new node */
 			Node temp1 = new Node(d, current, current.next);
 			if (current.next != null) {
@@ -64,10 +64,9 @@ public class List<E extends Comparable<E>> implements ListInterface<E> {
 			}
 
 			listSize++;
-			break;
 
-		/* current is higher than d, insert between current.prev and current */
-		case 1:
+		}else if (current.data.compareTo(d) > 0) {
+        /* current is higher than d, insert between current.prev and current */
 			/* your code NOTE: current.prev could be null */
 			Node temp2 = new Node(d, current.prior, current);
 			if (current.prior != null) {
@@ -80,32 +79,25 @@ public class List<E extends Comparable<E>> implements ListInterface<E> {
 			}
 
 			listSize++;
-			break;
-
+		}else {
 		/* current is lower than d, insert between current and current.next */
-		case -1:
 			/* you code NOTE: current.next could be null */
-			Node temp3 = new Node(d, current, current.next);
-			if (current.next != null) {
-				current.next = temp3;
-				temp3.next.prior = temp3;
-				current = temp3;
-			} else {
-				current.next = temp3;
-				current = temp3;
-			}
+				Node temp3 = new Node(d, current, current.next);
+				if (current.next != null) {
+					current.next = temp3;
+					temp3.next.prior = temp3;
+					current = temp3;
+				} else {
+					current.next = temp3;
+					current = temp3;
+				}
 
-			listSize++;
-			break;
-		default:
-			/*
-			 * you get here when your compare function spits out values not in
-			 * [-1, 0, 1] ¯\_(ツ)_/¯ dunno what to do then, prolly fix the
-			 * compare func
-			 */
+				listSize++;
 		}
+
 		return this;
 	}
+	
 
 	@Override
 	public E retrieve() {
