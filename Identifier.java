@@ -6,21 +6,6 @@ public class Identifier implements IdentifierInterface{
     int numberOfCharacters;
 
     @Override
-    public Identifier clone() {
-        try {
-            return (Identifier) super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public int compareTo(Identifier iden) {
-        return Character.compare(charArray[0], iden.getChar(0));
-    }
-
-    @Override
     public void init(char x) {
         charArray[0] = x;
         numberOfCharacters = 1;
