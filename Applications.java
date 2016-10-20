@@ -18,7 +18,7 @@ public class Applications {
 
     //=========Statements==========//
     private void assignment(Scanner in) throws APException{
-        Identifier identifier = parseIdentifier(in);
+        Identifier identifier = parseIdentifierAssignment(in);
 
         Set<BigInteger> result = parseExpression(in);
 
@@ -27,19 +27,22 @@ public class Applications {
         map.put(identifier,result);
     }
 
-    private void print_statement(Scanner in) {
+    private void print_statement(Scanner in) throws APException {
         /* After '?' we either encounter an identifier or a set followed by an operator */
         /*----skip '?'-------*/
         nextChar(in);
-        Set<BigInteger> set = new Set<BigInteger>();
-         /* skip'='*/
-        nextChar(in);
-        print_set(set);
+        if (in.hasNext()){
+            Set<BigInteger> set = parseExpression(in);
+            print_set(set);
+        }else
+            throw new APException("Please insert a valid print statement");
+
 
     }
     private void print_set(Set<BigInteger> set) {
-        while(!set.list.isEmpty()){
-            out.printf("%s ", set.list.retrieve().toString());
+        //TO DO
+        while(!set.isEmpty()){
+            out.printf("%s ", set.getElement().toString());
 
         }
 
@@ -117,6 +120,7 @@ public class Applications {
     boolean zero (Scanner in) { return nextCharIs(in, '0'); }
 
     void eoln(Scanner in) throws APException{
+        parseWhitespace(in);
         //make sure all spaces are read
         if(in.hasNext()){
             throw new APException("something");
@@ -143,9 +147,36 @@ public class Applications {
         }
 
     }
-
-    /*--------------parse identifier------------*/
+    /*--------------parse identifier -----------*/
     private Identifier parseIdentifier(Scanner in) throws APException {
+        Identifier identifier = new Identifier();
+
+        identifier.init(nextChar(in));
+
+        while (in.hasNext()) {
+            if(nextCharIsAlphanumeric(in)){
+                identifier.addChar(nextChar(in));
+            }else
+            if (nextCharIs(in, ' ')) {
+                parseWhitespace(in);
+                if (!nextCharIsAlphanumeric(in)) {
+                    break;
+                } else {
+                    throw new APException("Spaces between Identifier are not allowed\n");
+                }
+            }else
+            if (additive_operator(in)||multiplicative_operator(in)){
+                break;
+
+            }else {
+                throw new APException("Identifier consists of only alphanumerical characters\n");
+            }
+        }
+        return identifier;
+    }
+
+    /*--------------parse identifier for assignment------------*/
+    private Identifier parseIdentifierAssignment(Scanner in) throws APException {
         Identifier identifier = new Identifier();
 
         identifier.init(nextChar(in));
@@ -179,8 +210,6 @@ public class Applications {
     /*-----------parse Set--------------------*/
     private Set<BigInteger> parseSet(Scanner in) throws APException {
         Set<BigInteger> set = new Set<BigInteger>();
-
-
         /*-----------skip '{'---------*/
         nextChar(in);
 
@@ -190,6 +219,7 @@ public class Applications {
 
             if(in.hasNextBigInteger()) {
                 /*add Biginteger or something---*/
+                
 
 
 
@@ -206,19 +236,25 @@ public class Applications {
 
     /*------------parse Expression------------*/
     private Set<BigInteger> parseExpression(Scanner in) throws APException {
-        parseWhitespace(in);
+        /*--------read term --------*/
         Set<BigInteger> result = term(in);
 
+        parseWhitespace(in);
+
         while (additive_operator(in)) {
-            char operator = nextChar(in);
-            result = performOperation(operator, result, term(in));
+                char operator = nextChar(in);
+                result = performOperation(operator, result, term(in));
+
         }
+
+        eoln(in);
 
         return result;
     }
 
     /*--------- terms seperated by additive_operator--------*/
     Set<BigInteger> term(Scanner in) throws APException {
+        parseWhitespace(in);
 
         Set<BigInteger> result = factor(in);
 
@@ -233,16 +269,15 @@ public class Applications {
     }
     /*------------perform operator---------*/
     Set<BigInteger> performOperation(char operator, SetInterface<BigInteger> first, SetInterface<BigInteger> second) throws APException {
-          if( operator == '+') {
-              return (Set<BigInteger>) first.union((Set<BigInteger>) second);
-          } else
-          if (operator == '-') {
-              return (Set<BigInteger>) first.complement((Set<BigInteger>) second);
-          } else
-              return (Set<BigInteger>) first.symmetricDifference((Set<BigInteger>) second);
+        if( operator == '+') {
+            return (Set<BigInteger>) first.union((Set<BigInteger>) second);
+        } else
+        if (operator == '-') {
+            return (Set<BigInteger>) first.complement((Set<BigInteger>) second);
+        } else
+            return (Set<BigInteger>) first.symmetricDifference((Set<BigInteger>) second);
 
     }
-
 
     /*----------parse whitespace----------*/
     private void parseWhitespace(Scanner in){
