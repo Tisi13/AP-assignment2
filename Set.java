@@ -1,12 +1,9 @@
 package assignment2;
 
-
-
 /**
- * Created by Tisi on 10/19/16.
  *
  */
-public class Set<E extends Comparable<E>>  implements SetInterface<E> {
+public class Set<E extends Comparable<E>> implements SetInterface<E> {
 
     List<E> list = new List<>();
 
@@ -16,6 +13,16 @@ public class Set<E extends Comparable<E>>  implements SetInterface<E> {
     public Set<E> init() {
         list.init();
         return this;
+    }
+
+    public Set<E> copy() {
+        Set<E> copySet = new Set<E>();
+        list.goToFirst();
+        while (!isEmpty()){
+            copySet.addElement(getElement());
+            list.goToNext();
+        }
+        return copySet;
     }
 
     @Override
@@ -31,31 +38,77 @@ public class Set<E extends Comparable<E>>  implements SetInterface<E> {
     public boolean isEmpty() { return list.isEmpty(); }
 
     @Override
-    public SetInterface<E> complement(SetInterface<E> set) {
+    public Set<E> complement(Set<E> set) throws APException {
 
-        return null;
+        Set<E> copySet = set.copy();
+
+        Set<E> complementSet = new Set<E>();
+
+        while (!copySet.isEmpty()){
+            if(!contains(getElement())){
+                complementSet.addElement(getElement());
+            }
+            copySet.removeElement();
+        }
+        return complementSet;
     }
 
     @Override
-    public SetInterface<E> intersection(SetInterface<E> set) {
-        return null;
+    public Set<E> intersection(Set<E> set) throws APException {
+        Set<E> copySet = this.copy();
+
+        Set<E> intersectionSet = new Set<E>();
+
+        while (!copySet.isEmpty()){
+            if (set.contains(copySet.getElement())){
+                intersectionSet.addElement(copySet.getElement());;
+            }
+            copySet.removeElement();
+        }
+
+        return intersectionSet;
     }
 
     @Override
-    public SetInterface<E> union(SetInterface<E> set) throws APException {
-        return null;
+    public Set<E> union(Set<E> set) throws APException {
+
+        Set<E> unionSet = copy();
+
+        Set<E> complementCopy = complement(set);
+
+        while (!complementCopy.isEmpty()){
+            unionSet.addElement(complementCopy.getElement());;
+            complementCopy.removeElement();
+        }
+
+        return unionSet;
     }
 
     @Override
-    public SetInterface<E> symmetricDifference(SetInterface<E> set) throws APException {
-        return null;
+    public Set<E> symmetricDifference(Set<E> set) throws APException {
+        Set<E> unionSet = union(set);
+        Set<E> intersectionSet = intersection(set);
+
+        while (!intersectionSet.isEmpty()){
+            if (unionSet.contains(intersectionSet.getElement())){
+                try {
+                    unionSet.removeElement();;
+                } catch (APException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            intersectionSet.removeElement();
+        }
+        return unionSet;
     }
 
     @Override
     public int numberOfElements() {
-        return 0;
+        return list.size();
     }
 
     @Override
     public boolean contains(E element) {return list.find(element);}
 }
+
