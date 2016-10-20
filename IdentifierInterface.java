@@ -1,7 +1,7 @@
 package assignment2;
 
 
-/** ADT for the class Identifier
+/** ADT for the class Identifier 
  *
  * @author Tisiana Henricus, Iliana Kyritsi
  * @elements
