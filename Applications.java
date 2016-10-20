@@ -233,15 +233,16 @@ public class Applications {
     }
     /*------------perform operator---------*/
     Set<BigInteger> performOperation(char operator, SetInterface<BigInteger> first, SetInterface<BigInteger> second) throws APException {
-        if( operator == '+') {
-            return (Set<BigInteger>) first.union(second);
-        } else
-        if (operator == '-') {
-            return (Set<BigInteger>) first.complement(second);
-        } else
-            return (Set<BigInteger>) first.symmetricDifference(second);
+          if( operator == '+') {
+              return (Set<BigInteger>) first.union((Set<BigInteger>) second);
+          } else
+          if (operator == '-') {
+              return (Set<BigInteger>) first.complement((Set<BigInteger>) second);
+          } else
+              return (Set<BigInteger>) first.symmetricDifference((Set<BigInteger>) second);
 
     }
+
 
     /*----------parse whitespace----------*/
     private void parseWhitespace(Scanner in){
