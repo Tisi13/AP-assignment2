@@ -1,7 +1,7 @@
 package assignment2;
 
 
-/** ADT for the class Identifier extends Data
+/** ADT for the class Identifier
  *
  * @author Tisiana Henricus, Iliana Kyritsi
  * @elements
@@ -22,7 +22,7 @@ package assignment2;
  *    	<br>
  **/
 
-public interface IdentifierInterface extends Data<Identifier>{
+public interface IdentifierInterface {
 
 	/** Initializes the Identifier object to a character x.
 	 * @precondition
